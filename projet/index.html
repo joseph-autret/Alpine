@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Weather App</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+</head>
+<body>
+    <div class="container"  x-data="weatherApp()">
+        <h1>Weather App</h1>
+        <div class="search">
+            <button x-on:click="getWeather()">Actualiser la météo à:</button>
+            <input type="text" x-model="city" placeholder="Entrez la ville">
+          </div>
+        <div class="carousel">
+            <div class="card">
+              <h2>Ville: Paris</h2>
+              <p>Température: <span x-text="weatherParis && weatherParis.main ? weatherParis.main.temp : 'N/A'"></span>°C</p>
+              <p>Humidité: <span x-text="weatherParis && weatherParis.main ? weatherParis.main.humidity : 'N/A'"></span>%</p>
+              <p>Description: <span x-text="weatherParis && weatherParis.weather ? weatherParis.weather[0].description : 'N/A'"></span></p>
+            </div>
+            <div class="card">
+              <h2>Ville: Lyon</h2>
+              <p>Température: <span x-text="weatherLyon && weatherLyon.main ? weatherLyon.main.temp : 'N/A'"></span>°C</p>
+              <p>Humidité: <span x-text="weatherLyon && weatherLyon.main ? weatherLyon.main.humidity : 'N/A'">%</p>
+              <p>Description: <span x-text="weatherLyon && weatherLyon.weather ? weatherLyon.weather[0].description : 'N/A'"></span></p>
+            </div>
+            <div class="card">
+              <h2>Ville: Bordeaux</h2>
+              <p>Température: <span x-text="weatherBordeaux && weatherBordeaux.main ? weatherBordeaux.main.temp : 'N/A'"></span>°C</p>
+              <p>Humidité: <span x-text="weatherBordeaux && weatherBordeaux.main ? weatherBordeaux.main.humidity : 'N/A'"></span>%</p>
+              <p>Description: <span x-text="weatherBordeaux && weatherBordeaux.weather ? weatherBordeaux.weather[0].description : 'N/A'"></span></p>
+            </div>
+            <div class="card">
+                <h2>Ville: Marseille</h2>
+                <p>Température: <span x-text="weatherMarseille && weatherMarseille.main ? weatherMarseille.main.temp : 'N/A'"></span>°C</p>
+                <p>Humidité: <span x-text="weatherMarseille && weatherMarseille.main ? weatherMarseille.main.humidity : 'N/A'"></span>%</p>
+                <p>Description: <span x-text="weatherMarseille && weatherMarseille.weather ? weatherMarseille.weather[0].description : 'N/A'"></span></p>
+              </div>
+              <div class="card">
+                <h2>Ville: Toulouse</h2>
+                <p>Température: <span x-text="weatherToulouse && weatherToulouse.main ? weatherToulouse.main.temp : 'N/A'"></span>°C</p>
+                <p>Humidité: <span x-text="weatherToulouse && weatherToulouse.main ? weatherToulouse.main.humidity : 'N/A'"></span>%</p>
+                <p>Description: <span x-text="weatherToulouse && weatherToulouse.weather ? weatherToulouse.weather[0].description : 'N/A'"></span></p>
+              </div>
+          </div>
+          <!-- Bouton pour défiler le carrousel vers la gauche -->
+            <button class="scroll-button left">Défiler à gauche</button>
+
+            <!-- Bouton pour défiler le carrousel vers la droite -->
+            <button class="scroll-button right">Défiler à droite</button>
+    </div>
+    <table class="weatherresearch">
+        <div class="container"  x-data="weatherSearch()">
+            <h1>Weather Search</h1>
+            <div class="search">
+                <input type="text" x-model="city" placeholder="Entrez la ville">
+                <button x-on:click="getWeather()">Obtenir la météo</button>
+            </div>
+            <div x-show="weather">
+                <h2>Météo actuelle à <span x-text="weather.name"></span>:</h2>
+                <p><strong>Température :</strong> <span x-text="weather.main.temp"></span>°C</p>
+                <p><strong>Humidité :</strong> <span x-text="weather.main.humidity"></span>%</p>
+                <p><strong>Description :</strong> <span x-text="weather.weather[0].description"></span></p>
+            </div>
+        </div>   
+    </table>
+
+
+
+
+
+      
+
+    <script>
+        // Fonction qui définit les données et les fonctions pour la première partie de la page
+        function weatherApp() {
+            return {
+                // Variable pour stocker le nom de la ville entrée par l'utilisateur
+                city: "",
+                
+                // Variables pour stocker les données météorologiques de trois villes différentes
+                weatherParis: null,
+                weatherLyon: null,
+                weatherBordeaux: null,
+                weatherMarseille: null,
+                weatherToulouse: null,
+    
+                // Fonction asynchrone pour obtenir les données météorologiques en fonction de la ville saisie
+                async getWeather() {
+                    // Clé API pour accéder aux données météorologiques
+                    const apiKey = "ebb489192ef60c5b68504b4b4c673fde";
+                    
+                    // URL de l'API météo avec le nom de la ville et l'unité de mesure (celsius) spécifiés
+                    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=${apiKey}`;
+    
+                    try {
+                        // Envoi d'une requête à l'API météo
+                        const response = await fetch(apiUrl);
+                        
+                        // Conversion de la réponse en format JSON
+                        const data = await response.json();
+    
+                        // Vérification du code de réponse (200 signifie succès)
+                        if (data.cod === 200) {
+                            // Stockage des données météorologiques dans les variables appropriées en fonction de la ville
+                            if (this.city.toLowerCase() === "paris") {
+                                this.weatherParis = data;
+                            } else if (this.city.toLowerCase() === "lyon") {
+                                this.weatherLyon = data;
+                            } else if (this.city.toLowerCase() === "bordeaux") {
+                                this.weatherBordeaux = data;
+                            }else if (this.city.toLowerCase() === "marseille") {
+                                this.weatherMarseille = data;
+                            }else if (this.city.toLowerCase() === "toulouse") {
+                                this.weatherToulouse = data;
+                            }
+                        } else {
+                            // Affichage d'une alerte en cas d'erreur
+                            alert("Ville non trouvée. Veuillez réessayer.");
+                        }
+                    } catch (error) {
+                        // En cas d'erreur lors de la requête
+                        console.error("Une erreur s'est produite :", error);
+                    }
+                },
+            };
+        }
+    
+        // Fonction qui définit les données et les fonctions pour la deuxième partie de la page
+        function weatherSearch() {
+            return {
+                // Variable pour stocker le nom de la ville entrée par l'utilisateur
+                city: "",
+    
+                // Variable pour stocker les données météorologiques d'une ville recherchée
+                weather: null,
+    
+                // Fonction asynchrone pour obtenir les données météorologiques de la ville recherchée
+                async getWeather() {
+                    // Clé API et URL de l'API météo similaires à la première fonction
+                    const apiKey = "ebb489192ef60c5b68504b4b4c673fde";
+                    const cityCopy = this.city;
+                    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityCopy}&units=metric&appid=${apiKey}`;
+    
+                    try {
+                        // Envoi d'une requête à l'API météo
+                        const response = await fetch(apiUrl);
+    
+                        // Conversion de la réponse en format JSON
+                        const data = await response.json();
+    
+                        // Vérification du code de réponse (200 signifie succès)
+                        if (data.cod === 200) {
+                            // Stockage des données météorologiques dans la variable "weather"
+                            this.weather = data;
+                        } else {
+                            // Affichage d'une alerte en cas d'erreur
+                            alert("Ville non trouvée. Veuillez réessayer.");
+                        }
+                    } catch (error) {
+                        // En cas d'erreur lors de la requête
+                        console.error("Une erreur s'est produite :", error);
+                    }
+                },
+            };
+        }
+            // Fonction pour faire défiler le carrousel vers la gauche
+            function scrollLeft() {
+                const carousel = document.querySelector('.carousel');
+                const cardWidth = document.querySelector('.card').offsetWidth;
+                carousel.scrollLeft -= cardWidth;
+            }
+
+            // Fonction pour faire défiler le carrousel vers la droite
+            function scrollRight() {
+                const carousel = document.querySelector('.carousel');
+                const cardWidth = document.querySelector('.card').offsetWidth;
+                carousel.scrollLeft += cardWidth;
+            }
+
+            // Ajouter des gestionnaires d'événements aux boutons de défilement
+            const leftScrollButton = document.querySelector('.scroll-button.left');
+            const rightScrollButton = document.querySelector('.scroll-button.right');
+
+            leftScrollButton.addEventListener('click', scrollLeft);
+            rightScrollButton.addEventListener('click', scrollRight);
+
+    </script>
+    
+</body>
+</html>
